@@ -1,7 +1,7 @@
 # @Author: zlt
-# @Time  : 2021/10/20 
+# @Time  : 2021/10/20 11:34
 # @File  : pcfg
-# @Description: PCFG格式解析实现
+# @Description: PCFG算法实现
 '''
 假设前提已有testword.txt和trainword.txt文件，里面分别存放单列测试口令和训练口令【format.py】
 '''
@@ -15,7 +15,7 @@ Sp = re.compile('S')
 # 读取数据集
 def loadpass(path):
     passwd = []
-    with open(path, encoding='utf-8', errors='ignore') as wordList:
+    with open(path, errors='ignore') as wordList:
         for line in wordList:
             passwd.append(line.strip())
     return passwd
@@ -85,10 +85,11 @@ def statistic(trainword):
                     m = 'S'+str(l)
                     count(part, m, special)
             s += m  #结构格式
-        if s in mode:
-            mode[s] += 1
-        else:
-            mode.setdefault(s, 1)
+        if s != '':
+            if s in mode:
+                mode[s] += 1
+            else:
+                mode.setdefault(s, 1)
     return mode, alpha, digit, special
 
 # 生成结构
@@ -141,13 +142,13 @@ if __name__ == '__main__':
     oribase, orialpha, oridigit, orispecial = statistic(trainword)
     #将基础结构出现次数转化为频率
     base_probability(oribase)
-    #将字母、数字、特殊字符出现次数转化为频率
+    # 将字母、数字、特殊字符出现次数转化为频率
     probability(orialpha)
     probability(oridigit)
     probability(orispecial)
     #基础结构频率排序（由高到低）
     oribase = sorted(oribase.items(), key=lambda t: t[1], reverse=True)
-    #字母频率排序
+    # #字母频率排序
     for key, value in orialpha.items():
         orialpha[key] = sorted(value.items(), key=lambda t: t[1], reverse=True)
     #数字频率排序
